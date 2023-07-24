@@ -2,10 +2,15 @@
 # -*- coding: utf-8 -*-
 
 from gimpfu import *
-from translate import Translator
 import re
 import HTMLParser
 
+import os,sys
+
+whereIAm=os.path.dirname(sys.argv[0]) # find location of executed file
+
+sys.path.append(whereIAm) # add to Python path
+from translate import Translator
 
 class HTMLDecodeParser(HTMLParser.HTMLParser):
     def __init__(self):
@@ -40,6 +45,7 @@ def translate_text_layers(image, drawable):
         pdb.gimp_item_set_name(group_text, "text-fr")
         pdb.gimp_image_insert_layer(image, group_text, None, 0)
         print("----------------groupe créé-----------------")
+
     if pdb.gimp_item_is_group(selected_layer):
         print("----------layer is group-------------")
         layers = selected_layer.layers
