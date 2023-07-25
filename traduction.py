@@ -21,7 +21,7 @@ class HTMLDecodeParser(HTMLParser.HTMLParser):
         self.result += data
         
         
-def translate_text_layers(image, drawable):
+def translate_text_layers(image, drawable, to_langue, from_langue):
     image.undo_group_start()
     
     translator = Translator(to_lang="fr", from_lang="es")
@@ -58,7 +58,7 @@ def translate_text_layers(image, drawable):
         print("--------Veuillez sélectionner un groupe de calques ou un calque de texte.----")
         gimp.message("Veuillez sélectionner un groupe de calques ou un calque de texte.")
         image.undo_group_end()
-        #return
+        return
         
     # Parcours de tous les calques du groupe
     print(layers)
@@ -83,6 +83,7 @@ def translate_text_layers(image, drawable):
 		
             # essayer de traduir
             try:
+                text = text.decode("utf-8")
                 translated_text = translator.translate(text)
             except Exception as e:
                 translated_text = "Erreur lors de la traduction : {}".format(e)
@@ -102,18 +103,24 @@ def translate_text_layers(image, drawable):
     pdb.gimp_displays_flush()
     pdb.gimp_message("fini")
     # restore stuff
+    print(image)
     image.undo_group_end()
+
 
 register(
     "python-fu-translate-text-layers",
-    "Translate text layers from French to English",
-    "Translate text layers from French to English",
+    "Translate text layers from a language to another",
+    "Translate text layers from a language to another",
     "Your Name",
     "Your Name",
     "2023",
     "<Image>/Filters/Language/Translate Text Layers",
     "*",
-    [],
+    [
+        #(PF_IMAGE,  'image',            'Image', None),
+        (PF_STRING, 'to_langue',      'Translate to language ','fr'),
+        (PF_STRING, 'from_langue',      'Translate from language','es')
+    ],
     [],
     translate_text_layers)
 
