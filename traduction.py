@@ -24,7 +24,7 @@ class HTMLDecodeParser(HTMLParser.HTMLParser):
 def translate_text_layers(image, drawable, to_langue, from_langue):
     image.undo_group_start()
     
-    translator = Translator(to_lang="fr", from_lang="es")
+    translator = Translator(to_lang=to_langue, from_lang=from_langue)
     print("------------start--------------")
     pdb.gimp_message_set_handler(MESSAGE_BOX)
     
@@ -33,8 +33,9 @@ def translate_text_layers(image, drawable, to_langue, from_langue):
     
     # Récupération du groupe de calques "text-fr" s'il existe
     group_text = None
+    group_name = "text-"+to_langue
     for layer in image.layers:
-        if pdb.gimp_item_is_group(layer) and pdb.gimp_item_get_name(layer) == "text-fr":
+        if pdb.gimp_item_is_group(layer) and pdb.gimp_item_get_name(layer) == group_name:
             group_text = layer
             print ("------------groupe preexistant-------------")
             break
@@ -42,7 +43,7 @@ def translate_text_layers(image, drawable, to_langue, from_langue):
     if group_text is None:
         # Créer un groupe de calques nommé "text-fr" s'il n'existe pas
         group_text = pdb.gimp_layer_group_new(image)
-        pdb.gimp_item_set_name(group_text, "text-fr")
+        pdb.gimp_item_set_name(group_text, group_name)
         pdb.gimp_image_insert_layer(image, group_text, None, 0)
         print("----------------groupe créé-----------------")
 
@@ -118,8 +119,8 @@ register(
     "*",
     [
         #(PF_IMAGE,  'image',            'Image', None),
-        (PF_STRING, 'to_langue',      'Translate to language ','fr'),
-        (PF_STRING, 'from_langue',      'Translate from language','es')
+        (PF_STRING, 'from_langue',      'Translate from language','es'),
+        (PF_STRING, 'to_langue',      'Translate to language ','fr')
     ],
     [],
     translate_text_layers)
