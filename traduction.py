@@ -21,7 +21,7 @@ class HTMLDecodeParser(HTMLParser.HTMLParser):
         self.result += data
         
         
-def translate_text_layers(image, drawable, to_langue, from_langue):
+def translate_text_layers(image, drawable, from_langue, to_langue):
     image.undo_group_start()
     
     translator = Translator(to_lang=to_langue, from_lang=from_langue)
@@ -107,7 +107,7 @@ def translate_text_layers(image, drawable, to_langue, from_langue):
     print(image)
     image.undo_group_end()
 
-def translate_text_layers_quick (image, drawable)
+def translate_text_layers_quick (image, drawable):
     translate_text_layers(image, drawable, "fr", "es")
 
 
