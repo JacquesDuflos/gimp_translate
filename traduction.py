@@ -107,6 +107,9 @@ def translate_text_layers(image, drawable, to_langue, from_langue):
     print(image)
     image.undo_group_end()
 
+def translate_text_layers_quick (image, drawable)
+    translate_text_layers(image, drawable, "fr", "es")
+
 
 register(
     "python-fu-translate-text-layers",
@@ -115,7 +118,7 @@ register(
     "Your Name",
     "Your Name",
     "2023",
-    "<Image>/Filters/Language/Translate Text Layers",
+    "<Image>/Filters/Language/Translate Text Layers...",
     "*",
     [
         #(PF_IMAGE,  'image',            'Image', None),
@@ -124,6 +127,19 @@ register(
     ],
     [],
     translate_text_layers)
+
+register(
+    "python-fu-translate-text-layers-quick",
+    "Translate text layers from a language to another",
+    "Translate text layers from a language to another",
+    "Your Name",
+    "Your Name",
+    "2023",
+    "<Image>/Filters/Language/Translate Text Layers",
+    "*",
+    [],
+    [],
+    translate_text_layers_quick)
 
 main()
 
