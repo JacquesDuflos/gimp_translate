@@ -102,9 +102,9 @@ def translate_text_layers(image, drawable, from_langue, to_langue):
             pdb.gimp_text_layer_set_text(duplicate, translated_text)
     # Actualisation de l'affichage de l'image
     pdb.gimp_displays_flush()
-    pdb.gimp_message("fini")
+    #pdb.gimp_message("fini")
     # restore stuff
-    print(image)
+    #print(image)
     image.undo_group_end()
 
 def translate_text_layers_quick (image, drawable):
