@@ -1,7 +1,9 @@
 # gimp_translate
 gimp plug in that translates every text layer from a language to another
 
-# used modules
+## installation
+Extract the folder and move it to your Gimp plug-ins folder. Eventually restart Gimp or use Filters->Scripts->Update scripts. The plug-ins should be available in Filters->Language
+## used modules
 this plug in uses the folowing modules :
 * translate python
 https://github.com/terryyin/translate-python
@@ -10,7 +12,7 @@ http://docs.python-requests.org/
 * LibreTranslate
 https://github.com/LibreTranslate/LibreTranslate
 
-# language codes
+## language codes
 af	Afrikaans
 af-ZA	Afrikaans (South Africa)
 ar	Arabic
