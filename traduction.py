@@ -12,6 +12,11 @@ whereIAm=os.path.dirname(sys.argv[0]) # find location of executed file
 sys.path.append(whereIAm) # add to Python path
 from translate import Translator
 
+debug = True
+def trace(s):
+    if debug:
+        print (s)
+
 class HTMLDecodeParser(HTMLParser.HTMLParser):
     def __init__(self):
         HTMLParser.HTMLParser.__init__(self)
@@ -25,7 +30,7 @@ def translate_text_layers(image, drawable, from_langue, to_langue):
     image.undo_group_start()
     
     translator = Translator(to_lang=to_langue, from_lang=from_langue)
-    print("------------start--------------")
+    trace("------------start--------------")
     pdb.gimp_message_set_handler(MESSAGE_BOX)
     
     # Recuperation du groupe de calques selectionne
@@ -37,7 +42,7 @@ def translate_text_layers(image, drawable, from_langue, to_langue):
     for layer in image.layers:
         if pdb.gimp_item_is_group(layer) and pdb.gimp_item_get_name(layer) == group_name:
             group_text = layer
-            print ("------------groupe preexistant-------------")
+            trace ("------------groupe preexistant-------------")
             break
 
     if group_text is None:
@@ -45,16 +50,16 @@ def translate_text_layers(image, drawable, from_langue, to_langue):
         group_text = pdb.gimp_layer_group_new(image)
         pdb.gimp_item_set_name(group_text, group_name)
         pdb.gimp_image_insert_layer(image, group_text, None, 0)
-        print("----------------groupe créé-----------------")
+        trace("----------------groupe créé-----------------")
 
     if pdb.gimp_item_is_group(selected_layer):
-        print("----------layer is group-------------")
+        trace("----------layer is group-------------")
         layers = selected_layer.layers
-        print (layers)
+        trace (layers)
     elif pdb.gimp_item_is_text_layer(selected_layer):
-        print("----------layer is text-------------")
+        trace("----------layer is text-------------")
         layers=[selected_layer]
-        print (layers)
+        trace (layers)
     else:
         print("--------Veuillez sélectionner un groupe de calques ou un calque de texte.----")
         gimp.message("Veuillez sélectionner un groupe de calques ou un calque de texte.")
@@ -62,10 +67,10 @@ def translate_text_layers(image, drawable, from_langue, to_langue):
         return
         
     # Parcours de tous les calques du groupe
-    print(layers)
+    trace(layers)
     for layer in layers:
-        print("------------for--------------")
-        print (layer)
+        trace("------------for--------------")
+        trace (layer)
         # Vérification si le calque est de type texte
         if pdb.gimp_item_is_text_layer(layer):
             # Dupliquer le calque
@@ -77,7 +82,7 @@ def translate_text_layers(image, drawable, from_langue, to_langue):
             # Récupérer le contenu texte du calque dupliqué
             text = pdb.gimp_text_layer_get_text(duplicate)
             if text is None :
-                print ("----------text had markup-------------")
+                trace ("----------text had markup-------------")
                 text = pdb.gimp_text_layer_get_markup(duplicate)
                 # quitter les markups avec une RegEx
                 text= re.sub(r"<.*?>", "", text)
@@ -88,12 +93,12 @@ def translate_text_layers(image, drawable, from_langue, to_langue):
                 translated_text = translator.translate(text)
             except Exception as e:
                 translated_text = "Erreur lors de la traduction : {}".format(e)
-                print("Erreur lors de la traduction : {}".format(e))
+                trace("Erreur lors de la traduction : {}".format(e))
 
             # vérifier s'il y a des caractères spéciaux html
 			# translated_text="J'aime les bananes &amp; les oranges &#128512;" #pour tester
             if re.search(r"&[#\w]+;", translated_text):
-                print("-----------caractères html---------------")
+                trace("-----------caractères html---------------")
                 # remplacer les caractères 
                 parser = HTMLDecodeParser()
                 parser.feed(translated_text)
@@ -104,24 +109,39 @@ def translate_text_layers(image, drawable, from_langue, to_langue):
     pdb.gimp_displays_flush()
     #pdb.gimp_message("fini")
     # restore stuff
-    #print(image)
+    #trace(image)
     image.undo_group_end()
 
 def translate_text_layers_quick (image, drawable):
     translate_text_layers(image, drawable, "fr", "es")
 
+author = "Jacques Duflos"
+root_menu = "<Image>/Filters/Language/"
+blurb = "Translate text layers from a language to another"
+date = "2023"
 
 register(
     "python-fu-translate-text-layers",
-    "Translate text layers from a language to another",
-    "Translate text layers from a language to another",
-    "Your Name",
-    "Your Name",
-    "2023",
-    "<Image>/Filters/Language/Translate Text Layers...",
+    blurb,
+    '''The plug-in creates copies of the text layers and move them to a layer group named \"text-xx\" where xx is the language code according to ISO 639-1.
+    It will create the layer group if not found. Then it will translate the text with the online service Mymemory and update the text of the
+    copied layer. This plug-in will behave diferentely according to the selected layer.
+text layer selected
+
+If a text layer is selected, the plug-in will copy and translate the one selected text layer.
+layer selected
+
+If a layer group is selected, the plug-in will copy one by one each text layer of the group and translate them. Non recursive. If there is a sub-layer
+group, it will not be fetched
+any other selection
+
+If neither a text layer nor a layer group is selected, the plug-in displays an error message and stops''',
+    author,
+    author,
+    date,
+    root_menu+"Translate Text Layers...",
     "*",
     [
-        #(PF_IMAGE,  'image',            'Image', None),
         (PF_STRING, 'from_langue',      'Translate from language','es'),
         (PF_STRING, 'to_langue',      'Translate to language ','fr')
     ],
@@ -130,12 +150,24 @@ register(
 
 register(
     "python-fu-translate-text-layers-quick",
-    "Translate text layers from a language to another",
-    "Translate text layers from a language to another",
-    "Your Name",
-    "Your Name",
-    "2023",
-    "<Image>/Filters/Language/Translate Text Layers",
+    blurb,
+    '''The plug-in creates copies of the text layers and move them to a layer group named \"text-xx\" where xx is the language code according to ISO 639-1.
+    It will create the layer group if not found. Then it will translate the text with the online service Mymemory and update the text of the
+    copied layer. This plug-in will behave diferentely according to the selected layer.
+text layer selected
+
+If a text layer is selected, the plug-in will copy and translate the one selected text layer.
+layer selected
+
+If a layer group is selected, the plug-in will copy one by one each text layer of the group and translate them. Non recursive. If there is a sub-layer
+group, it will not be fetched
+any other selection
+
+If neither a text layer nor a layer group is selected, the plug-in displays an error message and stops''',
+    author,
+    author,
+    date,
+    root_menu+"Translate Text Layers",
     "*",
     [],
     [],
