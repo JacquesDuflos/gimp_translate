@@ -3,14 +3,11 @@
 
 from gimpfu import *
 import re
-import HTMLParser
 import os,sys,json
 
 whereIAm=os.path.dirname(sys.argv[0]) # find location of executed file
 sys.path.append(whereIAm) # add to Python path
 from translate import Translator
-
-
 
 debug = True
 def trace(s):
@@ -114,14 +111,6 @@ def translate_text_layers(image, drawable, from_langue, to_langue):
                 translated_text = "Erreur lors de la traduction : {}".format(e)
                 trace("Erreur lors de la traduction : {}".format(e))
 
-            # vérifier s'il y a des caractères spéciaux html
-			# translated_text="J'aime les bananes &amp; les oranges &#128512;" #pour tester
-            if re.search(r"&[#\w]+;", translated_text):
-                trace("-----------caractères html---------------")
-                # remplacer les caractères 
-                parser = HTMLDecodeParser()
-                parser.feed(translated_text)
-                translated_text = parser.result
             # Mettre à jour le texte du calque dupliqué avec la traduction
             pdb.gimp_text_layer_set_text(duplicate, translated_text)
     # Actualisation de l'affichage de l'image
