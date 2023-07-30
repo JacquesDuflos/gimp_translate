@@ -23,7 +23,8 @@ The plug-in is registered as two different tools :
 ### Translate text layers...
 Will display the option window and execute accordingly
 ### Translate text layers
-Will translate the layer(s) from french to spanish without displaying the option window
+Will translate the layer(s) without displaying the option window. It will use the same option values than the most
+recent call of Translate text layers..., and use french ans spanish as default values.
 ## Known issues
 ### "gimp not responding" window
 In some cases, especially when there are a lot of texts to translate, the plug-in can provoke the "Gimp not responding" window to pop up. You can just wait for the plug-in to finish its job.

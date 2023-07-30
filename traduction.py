@@ -4,13 +4,13 @@
 from gimpfu import *
 import re
 import HTMLParser
-
-import os,sys
+import os,sys,json
 
 whereIAm=os.path.dirname(sys.argv[0]) # find location of executed file
-
 sys.path.append(whereIAm) # add to Python path
 from translate import Translator
+
+
 
 debug = True
 def trace(s):
@@ -28,12 +28,31 @@ class HTMLDecodeParser(HTMLParser.HTMLParser):
         
 def translate_text_layers(image, drawable, from_langue, to_langue):
     image.undo_group_start()
-    
+
+    # Chemin du fichier JSON où on enregistre les valeurs par défaut
+    json_file_name = os.path.basename(__file__).replace(".py", ".json")
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    json_file_path = os.path.join(current_dir, "..","..", json_file_name)
+
+    # Créer un dictionnaire avec les valeurs par défaut
+    data = {
+        "from_langue": from_langue,
+        "to_langue": to_langue
+    }
+
+    # Sauvegarder les données dans le fichier JSON
+    try:
+        with open(json_file_path, "w") as json_file:
+            json.dump(data, json_file)
+        print("Données sauvegardées avec succès dans", json_file_path)
+    except Exception as e:
+        print("Erreur lors de la sauvegarde des données :", e)
+
+
     translator = Translator(to_lang=to_langue, from_lang=from_langue)
     trace("------------start--------------")
-    pdb.gimp_message_set_handler(MESSAGE_BOX)
     
-    # Recuperation du groupe de calques selectionne
+    # Recuperation du calque ou groupe de calques selectionne
     selected_layer = pdb.gimp_image_get_active_layer(image)
     
     # Récupération du groupe de calques "text-fr" s'il existe
@@ -113,7 +132,23 @@ def translate_text_layers(image, drawable, from_langue, to_langue):
     image.undo_group_end()
 
 def translate_text_layers_quick (image, drawable):
-    translate_text_layers(image, drawable, "fr", "es")
+    # Créer le nom du fichier JSON où sont sauvegardées les valeurs par défaut
+    json_file_name = os.path.basename(__file__).replace(".py", ".json")
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    json_file_path = os.path.join(current_dir, "..","..", json_file_name)
+
+    # Lire les données à partir du fichier JSON
+    data={}
+    try:
+        with open(json_file_path, "r") as json_file:
+            data = json.load(json_file)
+        print("Données lues avec succès depuis", json_file_path)
+        print("from_lang =", data["from_lang"])
+        print("to_lang =", data["to_lang"])
+    except Exception as e:
+        print("Erreur lors de la lecture des données :", e)
+    #dans la ligne suivante, "fr" et "es" sont des valeurs renvoyées is la clé n'est pas trouvée.
+    translate_text_layers(image, drawable, data.get("from_langue","fr"), data.get("to_langue","es"))
 
 author = "Jacques Duflos"
 root_menu = "<Image>/Filters/Language/"
