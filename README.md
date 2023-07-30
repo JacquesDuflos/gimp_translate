@@ -1,7 +1,38 @@
 # gimp_translate
 gimp plug in that translates every text layer from a language to another
 
-# used modules
+## installation
+Extract the folder and move it to your Gimp plug-ins folder. Eventually restart Gimp or use Filters->Scripts->Update scripts. The plug-ins should be available in Filters->Language
+## behaviour
+The plug-in will create copies of the text layers and move them to a layer group named "text-xx" where xx is the language code (see section below). It will create the layer group if not found. Then it will translate the text with the online service Mymemory and update the text of the copied layer.
+This plug-in will behave diferentely according to the selected layer.
+### text layer selected
+If a text layer is selected, the plug-in will copy and translate the one selected text layer.
+### layer selected
+If a layer group is selected, the plug-in will copy one by one each text layer of the group and translate them. Non recursive. If there is a sub-layer group, it will not be fetched
+### any other selection
+If neither a text layer nor a layer group is selected, the plug-in displays an error message and stops
+## Options
+The options are :
+### Translate from language
+String. The original language from which you translate. Should be the code precisely spelled of the language (see section below).
+### Translate to language
+String. The language to which you translate. Should be the code precisely spelled of the language (see section below).
+## Two tools
+The plug-in is registered as two different tools :
+### Translate text layers...
+Will display the option window and execute accordingly
+### Translate text layers
+Will translate the layer(s) from french to spanish without displaying the option window
+## Known issues
+### "gimp not responding" window
+In some cases, especially when there are a lot of texts to translate, the plug-in can provoke the "Gimp not responding" window to pop up. You can just wait for the plug-in to finish its job.
+## Known limitations
+### lenght limitation
+The texts to translate must stay under 500 characters.
+### internet connexion
+You need acces to the internet as the translations are made via online service.
+## used modules
 this plug in uses the folowing modules :
 * translate python
 https://github.com/terryyin/translate-python
@@ -10,7 +41,7 @@ http://docs.python-requests.org/
 * LibreTranslate
 https://github.com/LibreTranslate/LibreTranslate
 
-# language codes
+## language codes
 af	Afrikaans
 af-ZA	Afrikaans (South Africa)
 ar	Arabic
